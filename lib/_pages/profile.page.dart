@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mbf/_services/socket_client.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key, required this.title}) : super(key: key);
@@ -24,13 +25,52 @@ class _ProfilePageState extends State<ProfilePage> {
     await FirebaseAuth.instance.signOut();
   }
 
+  void checkSock(){
+    debugPrint(SocketIO.getInstance().connected.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        MaterialButton(onPressed: _logout, color: Colors.teal, child: const Text("Logout"),),
-        const Text("data")
-      ],
+    return Scaffold(
+        appBar: AppBar(
+            backgroundColor: Colors.teal,
+            elevation: 0,
+            toolbarHeight:  0.0
+        ),
+        body:SingleChildScrollView(
+            child: Stack(
+                children: <Widget>[
+                  Container(
+                      padding: const EdgeInsets.all(50),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
+                        color: Colors.teal,
+                      ),
+                      width: double.infinity,
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Material(
+                                color: Colors.transparent,
+                                child: GestureDetector(
+                                    onTap: () {},
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(120),
+                                        child: Image.network("https://i.pravatar.cc/300", height: 120, width: 120,)
+                                    )
+                                )
+                            ),
+                            Text("Nafish Ahmed"),
+                            Text("Nafish Ahmed"),
+                            ElevatedButton(onPressed: _logout,  child: const Text("Logout",style: TextStyle(color: Colors.white),),),
+                            ElevatedButton(onPressed: checkSock,  child: const Text("Logout",style: TextStyle(color: Colors.white),),)
+                          ],
+                        ),
+                      )
+                  )
+                ]
+            )
+        )
     );
   }
 }

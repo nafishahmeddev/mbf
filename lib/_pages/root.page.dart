@@ -14,42 +14,37 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int _selectedIndex = 0;
+  final PageController _controller = PageController();
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+  @override
+  initState(){
+    super.initState();
+  }
+  void _onPageChanged(int index) {
+    setState((){
+      _selectedIndex  = index;
     });
+    _controller.jumpToPage(index);
   }
 
-
-  Future<void> _logout() async {
-    await FirebaseAuth.instance.signOut();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(title: "Profile"),
-    Text('Index 1: Business',),
-    Text('Index 2: School',),
-    ProfilePage(title: 'Index 3: Settings',),
-  ];
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      /*
-      appBar: AppBar(
-        title: Center(child: Text(widget.title, textAlign: TextAlign.center)),
-        elevation: 0,
-      ),
-
-       */
-      body:  _widgetOptions.elementAt(_selectedIndex),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _logout,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body:  PageView(
+        controller: _controller,
+        physics: NeverScrollableScrollPhysics(),
+        children: const [
+          HomePage(title: "Profile"),
+          Text('Index 1: Business',),
+          Text('Index 2: School',),
+          ProfilePage(title: 'Index 3: Settings',),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -71,9 +66,8 @@ class _RootPageState extends State<RootPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        //selectedItemColor: Colors.amber[800],
         type: BottomNavigationBarType.fixed,
-        onTap: _onItemTapped,
+        onTap: _onPageChanged,
       ),
     );
   }

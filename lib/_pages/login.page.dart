@@ -11,7 +11,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Future<void> _signInWithEmailAndPassword() async {
-    await FirebaseAuth.instance.signInAnonymously();
+    var x = await FirebaseAuth.instance.signInAnonymously();
+    print(x.toString());
   }
 
   @override

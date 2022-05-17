@@ -1,55 +1,53 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mbf/_pages/login.page.dart';
+import 'package:mbf/_pages/splace.page.dart';
+import 'package:mbf/router.dart';
 import 'firebase_options.dart';
+import  '_services/socket_client.dart';
 import '_pages/root.page.dart';
+import '_pages/login.page.dart';
 
-Future<void> main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+void main(){
   runApp(const App());
 }
 
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
   @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App>{
-  bool _isSignedIn = false;
-  @override
-  void initState(){
-    super.initState();
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User? user) {
-      setState((){
-        if (user == null) {
-          print('User is currently signed out!');
-          _isSignedIn = false;
-        } else {
-          _isSignedIn = true;
-        }
-
-
-      });
-    });
-  }
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-          primarySwatch: Colors.teal,
-          fontFamily: 'IBMPlexSans'
-      ),
-      home: _isSignedIn?const RootPage(title: 'Home'): const LoginPage(title: "Login"),
+    SocketIO.initialize();
+    return FutureBuilder(
+        future: Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
+        builder: (fbContext, snapshot){
+          Widget entryWidget = const SplashPage();
+          if (snapshot.hasError) {
+
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            entryWidget = const RootRouter();
+          }
+          return MaterialApp(
+            title: 'MBF',
+            theme: ThemeData(
+                primarySwatch: Colors.teal,
+                fontFamily: 'IBMPlexSans'
+            ),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+                  primarySwatch: Colors.teal,
+                  fontFamily: 'IBMPlexSans'
+                /* dark theme settings */
+              ),
+              themeMode: ThemeMode.system,
+              home: entryWidget
+          );
+        }
     );
   }
 }
+
 
