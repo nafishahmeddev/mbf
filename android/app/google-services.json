@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "3752203337",
+    "project_id": "mobilebloodbanks",
+    "storage_bucket": "mobilebloodbanks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3752203337:android:f325708f8bcf2b7e1f1b98",
+        "android_client_info": {
+          "package_name": "com.mobilbloodbanks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3752203337-1p3gqv7cpfeh2dhd32p0mjpbmvurvfe6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobilbloodbanks",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "3752203337-muf3g6f7j7rmtda2o41q25ls9peue2v7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh1iD-AGvpIH35KFQOBb-o0x0BrFxX73g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3752203337-muf3g6f7j7rmtda2o41q25ls9peue2v7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "3752203337-prjrhn12bh8ev8vfj059h6rej92a4bd8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "me.nafish.mbf"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3752203337:android:13239cf5fff228fb1f1b98",
+        "android_client_info": {
+          "package_name": "me.nafish.mbf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3752203337-muf3g6f7j7rmtda2o41q25ls9peue2v7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh1iD-AGvpIH35KFQOBb-o0x0BrFxX73g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3752203337-muf3g6f7j7rmtda2o41q25ls9peue2v7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "3752203337-prjrhn12bh8ev8vfj059h6rej92a4bd8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "me.nafish.mbf"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
