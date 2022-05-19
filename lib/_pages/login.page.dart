@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-  Future<void> _signInWithEmailAndPassword(_context) async {
+  Future<void> _signInWithEmailAndPassword(context) async {
     if (_formKey.currentState!.validate()) {
       _showLoadingDialog(context);
       try {
@@ -118,9 +118,9 @@ class _LoginPageState extends State<LoginPage> {
             child:SingleChildScrollView(
                 child: Column(
                     children:[
-                      SizedBox(height: 50,),
+                      const SizedBox(height: 50,),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 25),
+                        padding: const EdgeInsets.symmetric(vertical: 25),
                         child: Image.network("https://www.clip.bike/wp-content/uploads/2020/09/Clip-Favicon.png", height: 100, width: 100,),
                       ),
                       const Padding(
