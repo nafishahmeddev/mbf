@@ -34,12 +34,12 @@ class App extends StatelessWidget {
             title: 'MBF',
             theme: ThemeData(
                 primarySwatch: Colors.teal,
-                fontFamily: 'IBMPlexSans'
+                fontFamily: 'Jost'
             ),
               darkTheme: ThemeData(
                 brightness: Brightness.dark,
                   primarySwatch: Colors.teal,
-                  fontFamily: 'IBMPlexSans'
+                  fontFamily: 'Jost'
                 /* dark theme settings */
               ),
               themeMode: ThemeMode.system,
