@@ -33,14 +33,13 @@ class App extends StatelessWidget {
           return MaterialApp(
             title: 'MBF',
             theme: ThemeData(
-                primarySwatch: Colors.teal,
+                primarySwatch: Colors.red,
                 fontFamily: 'Jost'
             ),
               darkTheme: ThemeData(
                 brightness: Brightness.dark,
-                  primarySwatch: Colors.teal,
+                  primarySwatch: Colors.red,
                   fontFamily: 'Jost'
-                /* dark theme settings */
               ),
               themeMode: ThemeMode.system,
               home: entryWidget
