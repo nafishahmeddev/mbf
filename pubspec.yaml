@@ -37,6 +37,8 @@ dependencies:
   firebase_core: ^1.17.0
   firebase_auth: ^3.3.18
   socket_io_client: ^1.0.2
+  google_sign_in: ^5.3.1
+  flutter_facebook_auth: ^4.3.4
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +92,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/images/google.png
   fonts:
     - family: IBMPlexSans
       fonts:
