@@ -115,105 +115,130 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
+            child:Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[
                   const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                      child:Text("Login", style: TextStyle(fontSize: 25),)
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                    child: Text("Hello Again!", style: TextStyle(fontSize: 25),),
                   ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                      child:TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          label: Text("Email"),
-                          hintText: 'Enter your email',
+                  const Padding(
+                      padding: EdgeInsets.fromLTRB(25,4,25,25),
+                      child: SizedBox(
+                        width: 200,
+                        child: Text("Welcome back you have been missed",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
                         ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email cannot be blank';
-                          }
-                          if(!RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(value)){
-                            return "Please enter valid email";
-                          }
-                          return null;
-                        },
                       )
                   ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
 
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                      child:TextFormField(
-                        controller: _passwordController,
-                        decoration: const InputDecoration(
-                          label: Text("Password"),
-                          hintText: 'Enter your password',
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                            child:TextFormField(
+                              controller: _emailController,
+                              decoration: const InputDecoration(
+                                label: Text("Email"),
+                                hintText: 'Enter your email',
+                              ),
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Email cannot be blank';
+                                }
+                                if(!RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(value)){
+                                  return "Please enter valid email";
+                                }
+                                return null;
+                              },
+                            )
                         ),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter valid password';
-                          }
-                          return null;
-                        },
-                      )
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                            child:TextFormField(
+                              controller: _passwordController,
+                              decoration: const InputDecoration(
+                                label: Text("Password"),
+                                hintText: 'Enter your password',
+                              ),
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter valid password';
+                                }
+                                return null;
+                              },
+                            )
+                        ),
+
+                      ],
+                    ),
                   ),
-                  Container(
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child:
-                      _isLoading ? const CircularProgressIndicator() : Column(children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          child:  ElevatedButton(
-                            onPressed: (){_signInWithEmailAndPassword(context);},
-                            child: const Text('Sign in with email'),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 50),
-                          child:  MaterialButton(
-                            color: Colors.blue[500],
-                            elevation: 10,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 30.0,
-                                  width: 30.0,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/images/google.png'),
-                                        fit: BoxFit.cover),
-                                    shape: BoxShape.circle,
+                      _isLoading ? const CircularProgressIndicator() : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                              child:  ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
+                                  minimumSize: const Size.fromHeight(45),
                                 ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Text("Sign In with Google")
-                              ],
+                                onPressed: (){_signInWithEmailAndPassword(context);},
+                                child: const Text('Sign In'),
+                              ),
                             ),
+                            const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: SizedBox(
+                                  width: 200,
+                                  child: Text("or sign in with",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                )
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: MaterialButton(
+                                      color: Colors.white,
+                                      onPressed: (){_signInWithGoogle(context);},
+                                      padding: EdgeInsets.zero,
+                                      shape: const CircleBorder(),
+                                      child: Image.asset("assets/images/google.png", height: 40,),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: MaterialButton(
+                                      color: Colors.white,
+                                      onPressed: (){_signInWithFacebook(context);},
+                                      padding: EdgeInsets.zero,
+                                      shape: const CircleBorder(),
+                                      child: Image.asset("assets/images/facebook.png", height: 40,),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
 
-                            // by onpressed we call the function signup function
-                            onPressed: (){_signInWithGoogle(context);},
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          child:  ElevatedButton(
-                            onPressed: (){_signInWithFacebook(context);},
-                            child: const Text('Sign in with Facebook'),
-                          ),
-                        ),
-                      ],)
+                          ]
+                      )
                   )
-                ],
-              ),
+                ]
             )
         )
     );

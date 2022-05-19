@@ -94,6 +94,7 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
     - assets/images/google.png
+    - assets/images/facebook.png
   fonts:
     - family: IBMPlexSans
       fonts:
