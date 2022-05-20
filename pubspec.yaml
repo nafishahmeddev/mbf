@@ -39,6 +39,9 @@ dependencies:
   socket_io_client: ^1.0.2
   google_sign_in: ^5.3.1
   flutter_facebook_auth: ^4.3.4
+  google_maps_flutter: ^2.1.5
+  geolocator: ^8.2.1
+  geocoding: ^2.0.4
 
 dev_dependencies:
   flutter_test:

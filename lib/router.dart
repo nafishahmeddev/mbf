@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mbf/_pages/home.page.dart';
 import 'package:mbf/_pages/login.page.dart';
-import 'package:mbf/_pages/root.page.dart';
 
 class RootRouter extends StatefulWidget {
   const RootRouter({Key? key}) : super(key: key);
@@ -16,6 +16,7 @@ class _RootRouterState extends State<RootRouter> {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState((){
+        //Navigator.pushNamedAndRemoveUntil(context,'/root',(_) => false);
         if (user == null) {
           _isSignedIn = false;
         } else {
@@ -26,6 +27,6 @@ class _RootRouterState extends State<RootRouter> {
   }
   @override
   Widget build(BuildContext context) {
-    return _isSignedIn? const RootPage(title: "Root") : const LoginPage(title: "Page");
+    return _isSignedIn? const HomePage() : const LoginPage();
   }
 }

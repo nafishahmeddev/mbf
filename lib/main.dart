@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mbf/_pages/home.page.dart';
+import 'package:mbf/_pages/login.page.dart';
+import 'package:mbf/_pages/profile.page.dart';
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
 import 'firebase_options.dart';
@@ -12,9 +16,21 @@ void main(){
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
+  _checkForPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        print("permission not granted");
+      }
+    }else{
+      debugPrint("Permission granted");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    _checkForPermission();
     const int primaryColorPrimaryValue = 0xFF800000;
     const MaterialColor primaryColor = MaterialColor(primaryColorPrimaryValue, <int, Color>{
       50: Color(0xFFF0E0E0),
@@ -50,14 +66,14 @@ class App extends StatelessWidget {
                 primaryColor: primaryColor,
                 fontFamily: 'Jost'
             ),
-              darkTheme: ThemeData(
+            darkTheme: ThemeData(
                 brightness: Brightness.dark,
-                  primarySwatch: primaryColor,
-                  primaryColor: primaryColor,
-                  fontFamily: 'Jost'
-              ),
-              themeMode: ThemeMode.system,
-              home: entryWidget
+                primarySwatch: primaryColor,
+                primaryColor: primaryColor,
+                fontFamily: 'Jost'
+            ),
+            themeMode: ThemeMode.system,
+            home: entryWidget,
           );
         }
     );
