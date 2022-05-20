@@ -31,43 +31,62 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    Color color = Theme.of(context).primaryColor;
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.teal,
+            backgroundColor: color,
             elevation: 0,
             toolbarHeight:  0.0
         ),
         body:SingleChildScrollView(
             child: Stack(
                 children: <Widget>[
+
                   Container(
                       padding: const EdgeInsets.all(50),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
-                        color: Colors.teal,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                        color: color,
                       ),
-                      width: double.infinity,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Material(
-                                color: Colors.transparent,
-                                child: GestureDetector(
-                                    onTap: () {},
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(120),
-                                        child: Image.network("https://i.pravatar.cc/300", height: 120, width: 120,)
-                                    )
-                                )
-                            ),
-                            Text("Nafish Ahmed"),
-                            Text("Nafish Ahmed"),
-                            ElevatedButton(onPressed: _logout,  child: const Text("Logout",style: TextStyle(color: Colors.white),),),
-                            ElevatedButton(onPressed: checkSock,  child: const Text("Logout",style: TextStyle(color: Colors.white),),)
-                          ],
-                        ),
-                      )
-                  )
+                    width: double.infinity,
+                    child:
+                    Center(
+                      child: Column(
+                        children: [
+                          Material(
+                              color: Colors.transparent,
+                              child: GestureDetector(
+                                  onTap: () {},
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(120),
+                                      child: Image.network("https://i.pravatar.cc/300", height: 120, width: 120,)
+                                  )
+                              )
+                          ),
+                          Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                children: const [
+                                  Text("Nafish Ahmed", style: TextStyle( fontSize:20, color: Colors.white, fontWeight: FontWeight.w600),),
+                                  Text("Berhampore, Murshidabad", style: TextStyle(fontSize:12,color: Colors.white),),
+                                ],
+                              )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top:0.0,
+                    right: 0.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                          icon: const Icon(Icons.logout,color: Colors.white,),
+                          onPressed: _logout
+                      ),
+                    ),
+                  ),
                 ]
             )
         )
