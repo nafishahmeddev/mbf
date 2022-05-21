@@ -12,8 +12,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController(text: "nafish.ahmed.dev@gmail.com");
-  final TextEditingController _passwordController = TextEditingController(text: "@#Password123@#");
+  final TextEditingController _emailController = TextEditingController(text: "a@a.com");
+  final TextEditingController _passwordController = TextEditingController(text: "a@1234");
 
 
   bool _isLoading = false;
@@ -24,12 +24,12 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _showLoadingDialog(context);
       try {
-        var x = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        var x2 = await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text
         );
       } catch(e){
-        _showError(context, "Invalid email or password");
+        _showError(context, "Invalid email or password $e");
       }
       Navigator.pop(context);
     }
