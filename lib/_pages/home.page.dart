@@ -20,65 +20,11 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
   BitmapDescriptor? _markerIcon;
-  LatLng _myLatLong = const LatLng(52.4478, -3.5402);
+  CameraPosition _centerPosition = const CameraPosition(
+      target: LatLng(0, 0),
+      zoom: 15
+  );
   Set<Marker> _markers = <Marker>{};
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            color: Color.fromRGBO(0, 0, 0, 0.001),
-            child: GestureDetector(
-              onTap: () {},
-              child: DraggableScrollableSheet(
-                initialChildSize: 0.4,
-                minChildSize: 0.2,
-                maxChildSize: 0.75,
-                builder: (_, controller) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(25.0),
-                        topRight: const Radius.circular(25.0),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.remove,
-                          color: Colors.grey[600],
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            controller: controller,
-                            itemCount: 100,
-                            itemBuilder: (_, index) {
-                              return Card(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text("Element at index($index)"),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,81 +34,79 @@ class _HomePageState extends State<HomePage> {
     ));
     return Scaffold(
       key: _key,
-      body: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child:GoogleMap(
-                        mapType: MapType.normal,
-                        zoomControlsEnabled: false,
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: false,
-                        initialCameraPosition: CameraPosition(
-                          target: _myLatLong,
-                          zoom: 15,
-                        ),
-                        markers: _markers,
-                        onMapCreated: _onMapCreated,
-                      ),
-                    ),
-                    Positioned(
-                        left: 0,
-                        top: 45.0,
-                        height: 60,
-                        width: MediaQuery.of(context).size.width,
-                        child:Container(
-                          height: 60,
-                          width: double.infinity,
-                          child:    Row(
-                            children: [
-                              MaterialButton(
-                                onPressed: () => _key.currentState!.openDrawer(),
-                                child: Icon(Icons.menu, color: Colors.black,),
-                                padding: EdgeInsets.all(10),
-                                color: Colors.white,
-                                shape: const CircleBorder(),
-                              ),
-                              Expanded(child: Container()),
-                              MaterialButton(
-                                onPressed: (){
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const ProfilePage()),
-                                  );
-                                },
-                                child: Icon(Icons.account_circle, color: Colors.black,),
-                                padding: EdgeInsets.all(10),
-                                color: Colors.white,
-                                shape: const CircleBorder(),
-                              )
-                            ],
-                          ),
-                        )
-                    ),
-                    Positioned(
-                        left: 0,
-                        bottom: 0,
-                        height: 30,
-                        width: MediaQuery.of(context).size.width,
-                        child:Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).backgroundColor,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))
-                          ),
-                        )
-                    ),
-                  ]
+      body: Stack(
+          children: <Widget>[
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child:GoogleMap(
+                mapType: MapType.normal,
+                zoomControlsEnabled: false,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                initialCameraPosition: CameraPosition(
+                  target: _centerPosition.target,
+                  zoom: 15,
+                ),
+                markers: _markers,
+                onMapCreated: _onMapCreated,
+
+                onCameraMove: (CameraPosition position){
+                  setState((){
+                    _centerPosition = position;
+                  });
+                },
+                onCameraIdle: (){
+                  _fetchDonors();
+                },
               ),
             ),
-            Container(
-              height: 150,
-              color: Theme.of(context).backgroundColor,
+            Positioned(
+                left: 0,
+                top: 45.0,
+                height: 60,
+                width: MediaQuery.of(context).size.width,
+                child:SizedBox(
+                  height: 60,
+                  width: double.infinity,
+                  child:    Row(
+                    children: [
+                      MaterialButton(
+                        onPressed: () => _key.currentState!.openDrawer(),
+                        padding: const EdgeInsets.all(10),
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: const Icon(Icons.menu, color: Colors.black,),
+                      ),
+                      Expanded(child: Container()),
+                      MaterialButton(
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ProfilePage()),
+                          );
+                        },
+                        padding: const EdgeInsets.all(10),
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: const Icon(Icons.account_circle, color: Colors.black,),
+                      )
+                    ],
+                  ),
+                )
+            ),
+            Positioned(
+                bottom: 0,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: const Text("This is card"),
+                  ),
+                )
             )
           ]
       ),
@@ -196,22 +140,23 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  void _createMarker() {
+  void _fetchDonors() {
+    double zoom = _centerPosition.zoom;
+    double range = ((40000/pow(2, zoom)) * 2)/(110.574*2);
     Set<Marker> markers = <Marker>{};
     double random(double mn, double mx) {
       int fraction = 1000000;
       int min = (fraction*mn).toInt();
       int max = (fraction*mx).toInt();
       double randomValue = (min + Random().nextInt(max - min))/fraction;
-      print("Random double is => $randomValue");
       return randomValue;
     }
-    for(int x=0; x<random(10.00, 60.00).toInt(); x++){
-      double lat = _myLatLong.latitude;
-      double long = _myLatLong.longitude;
+    for(int x=0; x<50; x++){
+      double lat = _centerPosition.target.latitude;
+      double long = _centerPosition.target.longitude;
       LatLng ltLng= LatLng(
-        random((lat-0.01), (lat+0.01)),
-        random((long-0.01), (long+0.01)),
+        random((lat-range), (lat+range)),
+        random((long-range), (long+range)),
       );
       if (_markerIcon != null) {
         markers.add(Marker(
@@ -238,16 +183,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getCurrentLocation() async{
-    print("fetching location");
+    debugPrint("fetching location");
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _myLatLong = LatLng(position.latitude, position.longitude);
-        controller?.animateCamera(CameraUpdate.newLatLng(_myLatLong));
-        _createMarker();
+        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: _centerPosition.zoom);
+        controller?.animateCamera(CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)));
       });
     }).catchError((e) {
-      print(e);
+      debugPrint(e);
     });
   }
 
