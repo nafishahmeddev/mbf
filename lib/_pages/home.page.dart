@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(10),
                         color: Colors.white,
                         shape: const CircleBorder(),
-                        child: const Icon(Icons.account_circle, color: Colors.black,),
+                        child: const Icon(Icons.person, color: Colors.black,),
                       )
                     ],
                   ),
@@ -99,13 +99,43 @@ class _HomePageState extends State<HomePage> {
                 bottom: 0,
                 width: MediaQuery.of(context).size.width,
                 child: Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(2),
                   child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(18.0),
                     ),
-                    child: const Text("This is card"),
-                  ),
+                    child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                              child:
+                              Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(120),
+                                    child:
+                                    Image.network("https://i.pravatar.cc/300", height: 60, width: 60,),
+                                  ),
+                                  SizedBox(width: 15,),
+                                  Expanded(
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: const [
+                                          Text("Hi! Nafish Ahmed", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+                                          Text("This is card"),
+                                        ]
+                                    ),
+                                  ),
+                                  IconButton(onPressed: _getCurrentLocation, icon: Icon(Icons.my_location))
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                    ),
                 )
             )
           ]
@@ -142,7 +172,7 @@ class _HomePageState extends State<HomePage> {
   }
   void _fetchDonors() {
     double zoom = _centerPosition.zoom;
-    double range = ((40000/pow(2, zoom)) * 2)/(110.574*2);
+    double range = ((40000/pow(2, zoom)) * 2)/((150*2));
     Set<Marker> markers = <Marker>{};
     double random(double mn, double mx) {
       int fraction = 1000000;
@@ -151,7 +181,7 @@ class _HomePageState extends State<HomePage> {
       double randomValue = (min + Random().nextInt(max - min))/fraction;
       return randomValue;
     }
-    for(int x=0; x<50; x++){
+    for(int x=0; x<random(10.00, 50.00).toInt(); x++){
       double lat = _centerPosition.target.latitude;
       double long = _centerPosition.target.longitude;
       LatLng ltLng= LatLng(
@@ -187,7 +217,7 @@ class _HomePageState extends State<HomePage> {
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: _centerPosition.zoom);
+        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 15);
         controller?.animateCamera(CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)));
       });
     }).catchError((e) {
