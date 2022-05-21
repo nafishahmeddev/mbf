@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(120),
                                     child:
-                                    Image.network("https://i.pravatar.cc/300", height: 60, width: 60,),
+                                    Image.network(_user?.photoURL??"https://i.pravatar.cc/300", height: 60, width: 60,),
                                   ),
                                   const SizedBox(width: 15,),
                                   Expanded(
