@@ -16,7 +16,6 @@ class _RootRouterState extends State<RootRouter> {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState((){
-        //Navigator.pushNamedAndRemoveUntil(context,'/root',(_) => false);
         if (user == null) {
           _isSignedIn = false;
         } else {
