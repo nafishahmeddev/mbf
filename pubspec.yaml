@@ -42,8 +42,9 @@ dependencies:
   google_maps_flutter: ^2.1.5
   geolocator: ^8.2.1
   geocoding: ^2.0.4
-  flutter_background_service: ^2.1.0
   http: ^0.13.4
+  location: ^4.4.0
+  workmanager: ^0.5.0
 
 dev_dependencies:
   flutter_test:

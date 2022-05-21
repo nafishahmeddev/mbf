@@ -1,89 +1,73 @@
-import 'dart:async';
-import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
+import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:location/location.dart';
 import  '_services/socket_client.dart';
+const fetchBackground = "fetchBackground";
 
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case fetchBackground:
+        http.get(Uri.parse("https://nafish.me/location.php?priodictask=check"));
+        break;
+    }
+    return Future.value(true);
+  });
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeService();
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+  await Workmanager().registerPeriodicTask(
+    "1",
+    fetchBackground,
+    frequency: const Duration(minutes: 15),
+    constraints: Constraints(
+      networkType: NetworkType.connected,
+    ),
+    inputData: {},
+  );
   runApp(const App());
-}
-Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
-  await service.configure(
-    androidConfiguration: AndroidConfiguration(
-      // this will executed when app is in foreground or background in separated isolate
-      onStart: onStart,
-
-      // auto start service
-      autoStart: true,
-      isForegroundMode: true,
-      foregroundServiceNotificationTitle: "Running in background",
-      foregroundServiceNotificationContent: "Mobile Blood Finder is running background."
-    ),
-    iosConfiguration: IosConfiguration(
-      // auto start service
-      autoStart: true,
-
-      // this will executed when app is in foreground in separated isolate
-      onForeground: onStart,
-
-      // you have to enable background fetch capability on xcode project
-      onBackground: onIosBackground,
-    ),
-  );
-  service.startService();
-}
-// to ensure this executed
-// run app from xcode, then from xcode menu, select Simulate Background Fetch
-bool onIosBackground(ServiceInstance service) {
-  WidgetsFlutterBinding.ensureInitialized();
-  print('FLUTTER BACKGROUND FETCH');
-
-  return true;
-}
-
-void onStart(ServiceInstance service) async {
-  const LocationSettings locationSettings = LocationSettings(
-    accuracy: LocationAccuracy.best,
-    distanceFilter: 100,
-  );
-  StreamSubscription<Position> positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position? position) {
-    http.get(Uri.parse('https://nafish.me/location.php?location.php?latLong=${position?.latitude}:${position?.longitude}'));
-  });
-  // Only available for flutter 3.0.0 and later
-  DartPluginRegistrant.ensureInitialized();
-  service.on('stopService').listen((event) {
-    service.stopSelf();
-    positionStream.cancel();
-  });
 }
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
-  _checkForPermission() async {
+  void _startLocationTracking() {
+    /*
+    Location location = Location();
+    location.enableBackgroundMode(enable: true);
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      debugPrint("Location change detected ==> $currentLocation");
+      http.get(Uri.parse("https://nafish.me/location.php?latLong=$currentLocation"));
+    });
+     */
+  }
+  void _checkForPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.deniedForever) {
-        print("permission not granted");
+        debugPrint("permission not granted");
       }
     }else{
       debugPrint("Permission granted");
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
     _checkForPermission();
+    _startLocationTracking();
     const int primaryColorPrimaryValue = 0xFF800000;
     const MaterialColor primaryColor = MaterialColor(primaryColorPrimaryValue, <int, Color>{
       50: Color(0xFFF0E0E0),
