@@ -25,7 +25,15 @@ class _HomePageState extends State<HomePage> {
       zoom: 15
   );
   Set<Marker> _markers = <Marker>{};
-
+  @override
+  initState(){
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),
+        'assets/images/marker.png')
+        .then((d) {
+          print("Bitmap $d");
+      _markerIcon = d;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -40,7 +48,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               height: double.infinity,
               child:GoogleMap(
-                mapType: MapType.normal,
+                mapType: MapType.terrain,
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
@@ -118,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                     child:
                                     Image.network("https://i.pravatar.cc/300", height: 60, width: 60,),
                                   ),
-                                  SizedBox(width: 15,),
+                                  const SizedBox(width: 15,),
                                   Expanded(
                                     child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -129,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                                         ]
                                     ),
                                   ),
-                                  IconButton(onPressed: _getCurrentLocation, icon: Icon(Icons.my_location))
+                                  IconButton(onPressed: _fetchMyLocation, icon: Icon(Icons.my_location))
                                 ],
                               ),
                             )
@@ -208,11 +216,10 @@ class _HomePageState extends State<HomePage> {
   void _onMapCreated(GoogleMapController controllerParam) {
     setState(() {
       controller = controllerParam;
-      _getCurrentLocation();
+      _fetchMyLocation();
     });
   }
-
-  void _getCurrentLocation() async{
+  void _fetchMyLocation() async{
     debugPrint("fetching location");
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
