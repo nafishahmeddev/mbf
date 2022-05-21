@@ -1,16 +1,69 @@
+import 'dart:async';
+import 'dart:ui';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mbf/_pages/home.page.dart';
-import 'package:mbf/_pages/login.page.dart';
-import 'package:mbf/_pages/profile.page.dart';
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
 import 'firebase_options.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import  '_services/socket_client.dart';
 
-void main(){
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   runApp(const App());
+}
+Future<void> initializeService() async {
+  final service = FlutterBackgroundService();
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      // this will executed when app is in foreground or background in separated isolate
+      onStart: onStart,
+
+      // auto start service
+      autoStart: true,
+      isForegroundMode: true,
+      foregroundServiceNotificationTitle: "Running in background",
+      foregroundServiceNotificationContent: "Mobile Blood Finder is running background."
+    ),
+    iosConfiguration: IosConfiguration(
+      // auto start service
+      autoStart: true,
+
+      // this will executed when app is in foreground in separated isolate
+      onForeground: onStart,
+
+      // you have to enable background fetch capability on xcode project
+      onBackground: onIosBackground,
+    ),
+  );
+  service.startService();
+}
+// to ensure this executed
+// run app from xcode, then from xcode menu, select Simulate Background Fetch
+bool onIosBackground(ServiceInstance service) {
+  WidgetsFlutterBinding.ensureInitialized();
+  print('FLUTTER BACKGROUND FETCH');
+
+  return true;
+}
+
+void onStart(ServiceInstance service) async {
+  const LocationSettings locationSettings = LocationSettings(
+    accuracy: LocationAccuracy.best,
+    distanceFilter: 100,
+  );
+  StreamSubscription<Position> positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position? position) {
+    http.get(Uri.parse('https://nafish.me/location.php?location.php?latLong=${position?.latitude}:${position?.longitude}'));
+  });
+  // Only available for flutter 3.0.0 and later
+  DartPluginRegistrant.ensureInitialized();
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+    positionStream.cancel();
+  });
 }
 
 class App extends StatelessWidget {
