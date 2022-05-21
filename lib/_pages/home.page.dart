@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,14 +26,20 @@ class _HomePageState extends State<HomePage> {
       zoom: 15
   );
   Set<Marker> _markers = <Marker>{};
+  User? _user;
   @override
   initState(){
     BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),
         'assets/images/marker.png')
         .then((d) {
           print("Bitmap $d");
-      _markerIcon = d;
+          setState((){
+            _markerIcon = d;
+            _user = FirebaseAuth.instance.currentUser;
+          });
+
     });
+
   }
   @override
   Widget build(BuildContext context) {
@@ -131,9 +138,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
-                                          Text("Hi! Nafish Ahmed", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
-                                          Text("This is card"),
+                                        children: [
+                                          Text("Hi! ${_user?.displayName??""}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+                                          Text("${_user?.email??""}"),
                                         ]
                                     ),
                                   ),
