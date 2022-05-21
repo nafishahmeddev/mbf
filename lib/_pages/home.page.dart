@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   BitmapDescriptor? _markerIcon;
   CameraPosition _centerPosition = const CameraPosition(
       target: LatLng(0, 0),
-      zoom: 15
+      zoom: 0
   );
   Set<Marker> _markers = <Marker>{};
   User? _user;
@@ -59,13 +59,14 @@ class _HomePageState extends State<HomePage> {
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
+                mapToolbarEnabled: false,
+                minMaxZoomPreference: const MinMaxZoomPreference(13.00, 18.00),
                 initialCameraPosition: CameraPosition(
                   target: _centerPosition.target,
-                  zoom: 15,
+                  zoom: _centerPosition.zoom,
                 ),
                 markers: _markers,
                 onMapCreated: _onMapCreated,
-
                 onCameraMove: (CameraPosition position){
                   setState((){
                     _centerPosition = position;
@@ -231,8 +232,8 @@ class _HomePageState extends State<HomePage> {
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 15);
-        controller?.animateCamera(CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)));
+        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 16);
+        controller?.animateCamera(CameraUpdate.newCameraPosition(_centerPosition));
       });
     }).catchError((e) {
       debugPrint(e);
