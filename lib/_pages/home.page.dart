@@ -26,12 +26,24 @@ class _HomePageState extends State<HomePage> {
       zoom: 0
   );
   Set<Marker> _markers = <Marker>{};
+  Map<String,BitmapDescriptor> _icons = {};
   User? _user;
   @override
-  initState(){
+  initState() async {
+    Map<String, BitmapDescriptor> icons = {};
+    List labels = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
+    for(String icon in labels) {
+      BitmapDescriptor i = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(devicePixelRatio: 3.2),
+          "assets/images/markers/$icon.png");
+      icons[icon] = i;
+    }
+
     setState((){
       _user = FirebaseAuth.instance.currentUser;
+      _icons = icons;
     });
+
     super.initState();
   }
   @override
@@ -193,12 +205,11 @@ class _HomePageState extends State<HomePage> {
     String body = response.body;
     List locations = jsonDecode(body);
     for(List coordinates in locations){
-      BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),"assets/images/markers/${_getRandomMarkerIcon()}.png");
       markers.add(
           Marker(
             markerId: MarkerId("marker_${coordinates[0]}_${coordinates[1]}"),
             position: LatLng(coordinates[0],coordinates[1]),
-            icon: icon,
+            icon: _icons[_getRandomMarkerIcon()]?? await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2), "assets/images/marker.png"),
           )
       );
     }

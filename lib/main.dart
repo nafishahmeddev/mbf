@@ -19,20 +19,7 @@ void callbackDispatcher() {
     switch (task) {
       case fetchBackground:
         {
-          StreamSubscription<Position> positionStream = Geolocator.getPositionStream(
-              locationSettings: const LocationSettings(
-                accuracy: LocationAccuracy.medium,
-                distanceFilter: 100,
-              )
-          ).listen((Position? position) async {
-            debugPrint(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
-            http.Response response = await http.get(Uri.parse("https://nafish.me/location.php?priodictask=$position"));
-            debugPrint("Location sent to server: ${response.body}");
-          });
-          //Position position = await Geolocator.getCurrentPosition();
-          //http.Response response = await http.get(Uri.parse("https://nafish.me/location.php?priodictask=$position"));
-          //debugPrint("Location sent to server: ${response.body}");
-          break;
+         break;
         }
     }
     } catch(e){
