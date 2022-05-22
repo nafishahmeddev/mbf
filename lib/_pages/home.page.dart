@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mbf/_pages/profile.page.dart';
+import 'package:mbf/classes/coordinate.dart';
 import 'package:mbf/widgets/navbar.dart';
 
 import 'package:mbf/constants/Theme.dart';
@@ -25,9 +26,8 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
-  CameraPosition _centerPosition = const CameraPosition(target: LatLng(0, 0), zoom: 0);
+  CameraPosition _myLocation = const CameraPosition(target: LatLng(0, 0), zoom: 0);
   Set<Marker> _markers = <Marker>{};
-  User? _user;
 
   void printText (String text) {
     print("hello");
@@ -36,18 +36,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState(){
-    setState((){
-      _user = FirebaseAuth.instance.currentUser;
-    });
     super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
+  }
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: Navbar(
         title: "Home",
         searchBar: true,
@@ -75,14 +73,12 @@ class _HomePageState extends State<HomePage> {
                 mapToolbarEnabled: false,
                 minMaxZoomPreference: const MinMaxZoomPreference(13.00, 18.00),
                 initialCameraPosition: CameraPosition(
-                  target: _centerPosition.target,
-                  zoom: _centerPosition.zoom,
+                  target: _myLocation.target,
+                  zoom: _myLocation.zoom,
                 ),
                 markers: _markers,
                 onMapCreated: _onMapCreated,
-                onCameraIdle: (){
-                  _fetchDonors();
-                },
+                onCameraIdle: _fetchDonors,
               ),
             ),
             Positioned(
@@ -222,67 +218,56 @@ class _HomePageState extends State<HomePage> {
       // ),
     );
   }
-
-  String _getRandomMarkerIcon(){
-    List icons = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
-    final random = Random();
-    return icons[random.nextInt(icons.length)];
+  @override
+  dispose(){
+    controller?.dispose();
+    super.dispose();
   }
+  void _fetchDonors() async {
+    Set<Marker> markers = <Marker>{};
+    LatLngBounds visibleRegion = await controller!.getVisibleRegion();
+    LatLng centerLatLng = LatLng(
+      (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+      (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+    );
 
-  void _fetchDonors() {
-    /*
-    void ob()async {
-      Set<Marker> markers = <Marker>{};
-      LatLngBounds visibleRegion = await controller!.getVisibleRegion();
-      LatLng centerLatLng = LatLng(
-        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
-            2,
-        (visibleRegion.northeast.longitude +
-            visibleRegion.southwest.longitude) / 2,
+    //http get request
+    String url = "https://nafish.me/map/?zoom=${await controller!.getZoomLevel()}&latitude=${centerLatLng.latitude}&longitude=${centerLatLng.longitude}";
+    http.Response response = await http.get(Uri.parse(url));
+    List<dynamic> locations = json.decode(response.body);
+
+
+    for(dynamic point in locations){
+      Coordinate coordinate = Coordinate.fromJson(point);
+      markers.add(
+          Marker(
+            markerId: MarkerId("marker_${coordinate.latitude}_${coordinate.longitude}"),
+            position: LatLng(coordinate.latitude,coordinate.longitude),
+          )
       );
-
-      //http get request
-      http.Response response = await http.get(Uri.parse("https://nafish.me/map/?zoom=${controller!.getZoomLevel()}&latitude=${centerLatLng.longitude}&longitude=${_centerPosition.target.longitude}"));
-      String body = response.body;
-      List locations = jsonDecode(body);
-      //
-      BitmapDescriptor defaultIcon = await BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(devicePixelRatio: 3.2),
-          "assets/images/marker.png");
-      for (List coordinates in locations) {
-        markers.add(
-            Marker(
-              markerId: MarkerId("marker_${coordinates[0]}_${coordinates[1]}"),
-              position: LatLng(coordinates[0], coordinates[1]),
-              icon: defaultIcon,
-            )
-        );
-      }
-      setState(() {
-        _markers = markers;
-      });
-
     }
-
-     */
+    setState((){
+      _markers=markers;
+    });
   }
   void _onMapCreated(GoogleMapController controllerParam) {
     setState(() {
       controller = controllerParam;
-      _fetchMyLocation();
     });
+    _getMyLocation();
   }
-  void _fetchMyLocation() async{
+  void _getMyLocation() async{
     debugPrint("fetching location");
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 16);
-        controller?.animateCamera(CameraUpdate.newCameraPosition(_centerPosition));
+        _myLocation = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 16);
+        controller?.animateCamera(CameraUpdate.newCameraPosition(_myLocation));
       });
     }).catchError((e) {
       debugPrint(e);
     });
   }
+
 
 }

@@ -58,6 +58,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "3752203337-pse9aq8l3fhb544o7sqep33qpv903e07.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.nafish.mbf",
+            "certificate_hash": "81b298fef434b5088bbc345f26d25ddb151478e5"
+          }
+        },
+        {
           "client_id": "3752203337-muf3g6f7j7rmtda2o41q25ls9peue2v7.apps.googleusercontent.com",
           "client_type": 3
         }

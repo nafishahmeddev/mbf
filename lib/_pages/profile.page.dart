@@ -202,7 +202,7 @@ class ProfilePage extends StatelessWidget {
                         color: NowUIColors.info,
                         onPressed: () {
                           // Respond to button press
-                          Navigator.pushReplacementNamed(context, '/home');
+                          //Navigator.pushReplacementNamed(context, '/home');
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32.0),

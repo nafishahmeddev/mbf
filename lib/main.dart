@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
-import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
-//import 'package:location/location.dart';
 import  '_services/socket_client.dart';
-import 'package:mbf/screens/components.dart';
 const fetchBackground = "fetchBackground";
 
 Future<void> main() async {
@@ -69,6 +66,9 @@ class App extends StatelessWidget {
           options: DefaultFirebaseOptions.currentPlatform,
         ),
         builder: (fbContext, snapshot){
+          // Pass all uncaught errors from the framework to Crashlytics.
+          FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
           Widget entryWidget = const SplashPage();
           if (snapshot.hasError) {
 
