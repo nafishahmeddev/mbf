@@ -6,6 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mbf/_pages/profile.page.dart';
+import 'package:mbf/widgets/navbar.dart';
+
+import 'package:mbf/constants/Theme.dart';
+import 'package:mbf/widgets/drawer.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -27,6 +31,12 @@ class _HomePageState extends State<HomePage> {
   );
   Set<Marker> _markers = <Marker>{};
   User? _user;
+
+  void printText (String text) {
+    print("hello");
+  }
+  TextEditingController _emailTextController = TextEditingController();
+
   @override
   initState(){
     BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),
@@ -48,7 +58,20 @@ class _HomePageState extends State<HomePage> {
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
     return Scaffold(
-      key: _key,
+      appBar: Navbar(
+        title: "Home",
+        searchBar: true,
+        categoryOne: "Blood",
+        categoryTwo: "Hospital",
+        transparent: true,
+        tags: [],
+        getCurrentPage: printText,
+        searchOnChanged: printText,
+        searchController: _emailTextController,
+      ),
+      backgroundColor: NowUIColors.neutralDark,
+      // key: _scaffoldKey,
+      drawer: NowDrawer(currentPage: "Home"),
       body: Stack(
           children: <Widget>[
             SizedBox(
@@ -87,19 +110,19 @@ class _HomePageState extends State<HomePage> {
                   width: double.infinity,
                   child:    Row(
                     children: [
-                      MaterialButton(
-                        onPressed: () => _key.currentState!.openDrawer(),
-                        padding: const EdgeInsets.all(10),
-                        color: Colors.white,
-                        shape: const CircleBorder(),
-                        child: const Icon(Icons.menu, color: Colors.black,),
-                      ),
+                      // MaterialButton(
+                      //   onPressed: () => _key.currentState!.openDrawer(),
+                      //   padding: const EdgeInsets.all(10),
+                      //   color: Colors.white,
+                      //   shape: const CircleBorder(),
+                      //   child: const Icon(Icons.menu, color: Colors.black,),
+                      // ),
                       Expanded(child: Container()),
                       MaterialButton(
                         onPressed: (){
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const ProfilePage()),
+                            MaterialPageRoute(builder: (context) =>  ProfilePage()),
                           );
                         },
                         padding: const EdgeInsets.all(10),
@@ -156,34 +179,34 @@ class _HomePageState extends State<HomePage> {
             )
           ]
       ),
-      drawer:Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Drawer Header'),
-              ),
-              ListTile(
-                title: const Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-              ListTile(
-                title: const Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-            ],
-          )
-      ),
+      // drawer:Drawer(
+      //     child: ListView(
+      //       // Important: Remove any padding from the ListView.
+      //       padding: EdgeInsets.zero,
+      //       children: [
+      //         const DrawerHeader(
+      //           decoration: BoxDecoration(
+      //             color: Colors.blue,
+      //           ),
+      //           child: Text('Drawer Header'),
+      //         ),
+      //         ListTile(
+      //           title: const Text('Item 1'),
+      //           onTap: () {
+      //             // Update the state of the app.
+      //             // ...
+      //           },
+      //         ),
+      //         ListTile(
+      //           title: const Text('Item 2'),
+      //           onTap: () {
+      //             // Update the state of the app.
+      //             // ...
+      //           },
+      //         ),
+      //       ],
+      //     )
+      // ),
     );
   }
   void _fetchDonors() {

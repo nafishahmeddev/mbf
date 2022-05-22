@@ -45,6 +45,10 @@ dependencies:
   http: ^0.13.4
   location: ^4.4.0
   workmanager: ^0.5.0
+  font_awesome_flutter: ^10.1.0
+  url_launcher: ^6.1.2
+  scrollable_positioned_list: ^0.3.2
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:
@@ -102,7 +106,29 @@ flutter:
     - assets/images/google.png
     - assets/images/facebook.png
     - assets/images/marker.png
+    - assets/imgs/onboarding-bg.png
+    - assets/imgs/android.png
+    - assets/imgs/ios.png
+    - assets/imgs/creative-tim.png
+    - assets/imgs/now-logo.png
+    - assets/imgs/register-bg.png
+    - assets/imgs/bg-profile.png
+    - assets/imgs/profile-img.jpg
+    - assets/imgs/album-1.jpg
+    - assets/imgs/album-2.jpg
+    - assets/imgs/album-3.jpg
+    - assets/imgs/album-4.jpg
+    - assets/imgs/album-5.jpg
+    - assets/imgs/album-6.jpg
+    - assets/imgs/onboarding-free.png
+    - assets/imgs/invision-white-slim.png
   fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 600
+
     - family: IBMPlexSans
       fonts:
         - asset: assets/fonts/IBMPlexSans-Thin.ttf

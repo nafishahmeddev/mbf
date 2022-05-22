@@ -1,123 +1,247 @@
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mbf/_services/socket_client.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:mbf/constants/Theme.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//widgets
+import 'package:mbf/widgets/navbar.dart';
+import 'package:mbf/widgets/drawer.dart';
+import 'package:mbf/widgets/photo-album.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
 
-class _ProfilePageState extends State<ProfilePage> {
-  Position? _currentPosition;
-  String _currentAddress = "";
+List<String> imgArray = [
+  "assets/imgs/album-1.jpg",
+  "assets/imgs/album-2.jpg",
+  "assets/imgs/album-3.jpg",
+  "assets/imgs/album-4.jpg",
+  "assets/imgs/album-5.jpg",
+  "assets/imgs/album-6.jpg"
+];
 
-  void _logout(){
-    print("logging out");
-    FirebaseAuth.instance.signOut();
-    Navigator.pop(context);
+class ProfilePage extends StatelessWidget {
+  void printText (String text) {
+    print("hello");
   }
-
-  @override
-  initState(){
-    _getCurrentLocation();
-    super.initState();
-  }
-
-
-
-  _getCurrentLocation() async{
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-        _getAddressFromLatLng();
-      });
-    }).catchError((e) {
-      print(e);
-    });
-  }
-
-  _getAddressFromLatLng() async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          _currentPosition!.latitude,
-          _currentPosition!.longitude
-      );
-
-      Placemark place = placemarks[0];
-
-      setState(() {
-        _currentAddress = "${place.locality}, ${place.country}";
-        print("_current Address $_currentAddress");
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-  @override
+  TextEditingController _emailTextController = TextEditingController();
+   @override
   Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: color,
-            elevation: 0,
-            toolbarHeight:  0.0
+        extendBodyBehindAppBar: true,
+        appBar: Navbar(
+          title: "Profile",
+          transparent: true,
+          tags: [],
+          getCurrentPage: printText,
+          searchOnChanged: printText,
+          searchController: _emailTextController,
         ),
-        body:SingleChildScrollView(
-            child: Stack(
-                children: <Widget>[
-
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(25, 50, 25, 25),
+        backgroundColor: NowUIColors.bgColorScreen,
+        drawer: NowDrawer(currentPage: "Profile"),
+        body: Stack(
+          children: <Widget>[
+            Column(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
-                        color: color,
-                      ),
-                    width: double.infinity,
-                    child:
-                    Center(
-                      child: Column(
-                        children: [
-                          Material(
-                              color: Colors.transparent,
-                              child: GestureDetector(
-                                  onTap: () {},
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(120),
-                                      child: Image.network("https://i.pravatar.cc/300", height: 120, width: 120,)
-                                  )
-                              )
-                          ),
-                          Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
+                          image: DecorationImage(
+                              image: AssetImage("assets/imgs/bg-profile.png"),
+                              fit: BoxFit.cover)),
+                      child: Stack(
+                        children: <Widget>[
+                          SafeArea(
+                            bottom: false,
+                            right: false,
+                            left: false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 0, right: 0),
                               child: Column(
                                 children: [
-                                  Text("Nafish Ahmed", style: TextStyle( fontSize:20, color: Colors.white, fontWeight: FontWeight.w600),),
-                                  Text(_currentAddress!=""?_currentAddress:"Fetching location...", style: TextStyle(fontSize:12,color: Colors.white),),
+                                  CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          "assets/imgs/profile-img.jpg"),
+                                      radius: 65.0),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 24.0),
+                                    child: Text("John Doe",
+                                        style: TextStyle(
+                                            color: NowUIColors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 22)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text("Photographer",
+                                        style: TextStyle(
+                                            color: NowUIColors.white
+                                                .withOpacity(0.85),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 24.0, left: 42, right: 32),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text("58",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white,
+                                                    fontSize: 16.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text("Blood Donated",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white
+                                                        .withOpacity(0.8),
+                                                    fontSize: 12.0))
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text("26",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white,
+                                                    fontSize: 16.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text("Lives Saved",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white
+                                                        .withOpacity(0.8),
+                                                    fontSize: 12.0))
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text("48",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white,
+                                                    fontSize: 16.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text("People Helped",
+                                                style: TextStyle(
+                                                    color: NowUIColors.white
+                                                        .withOpacity(0.8),
+                                                    fontSize: 12.0))
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ],
-                              )
-                          ),
+                              ),
+                            ),
+                          )
                         ],
+                      )),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                      child: SingleChildScrollView(
+                          child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 32.0, right: 32.0, top: 42.0),
+                    child: Column(children: [
+                      Text("About me",
+                          style: TextStyle(
+                              color: NowUIColors.text,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 17.0)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 24.0, right: 24, top: 30, bottom: 24),
+                        child: Text(
+                            "An artist of considerable range, John - the name taken by Meblourne-raised, Brooklyn-based Nick Murphy - writes, performs and records all of his own music.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: NowUIColors.time)),
+                      ),
+                      PhotoAlbum(imgArray: imgArray)
+                    ]),
+                  ))),
+                ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: RaisedButton(
+                        textColor: NowUIColors.white,
+                        color: NowUIColors.info,
+                        onPressed: () {
+                          // Respond to button press
+                          Navigator.pushReplacementNamed(context, '/home');
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0),
+                        ),
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                left: 12.0, right: 12.0, top: 10, bottom: 10),
+                            child: Text("Follow",
+                                style: TextStyle(fontSize: 13.0))),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top:0.0,
-                    right: 0.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                          icon: const Icon(Icons.logout,color: Colors.white,),
-                          onPressed: _logout
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: RawMaterialButton(
+                        constraints: BoxConstraints.tight(Size(38, 38)),
+                        onPressed: () {},
+                        elevation: 4.0,
+                        fillColor: NowUIColors.defaultColor,
+                        child: Icon(FontAwesomeIcons.twitter,
+                            size: 14.0, color: Colors.white),
+                        padding: EdgeInsets.all(0.0),
+                        shape: CircleBorder(),
                       ),
                     ),
-                  ),
-                ]
+                    RawMaterialButton(
+                      constraints: BoxConstraints.tight(Size(38, 38)),
+                      onPressed: () {},
+                      elevation: 4.0,
+                      fillColor: NowUIColors.defaultColor,
+                      child: Icon(FontAwesomeIcons.facebook,
+                          size: 14.0, color: Colors.white),
+                      padding: EdgeInsets.all(0.0),
+                      shape: CircleBorder(),
+                    ),
+                  ],
+                ),
+              ),
             )
-        )
-    );
+          ],
+        ));
   }
-}
+  }

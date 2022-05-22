@@ -8,6 +8,7 @@ import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 import 'package:location/location.dart';
 import  '_services/socket_client.dart';
+import 'package:mbf/screens/components.dart';
 const fetchBackground = "fetchBackground";
 
 void callbackDispatcher() {
@@ -98,11 +99,8 @@ class App extends StatelessWidget {
           }
           return MaterialApp(
             title: 'MBF',
-            theme: ThemeData(
-                primarySwatch: primaryColor,
-                primaryColor: primaryColor,
-                fontFamily: 'Jost'
-            ),
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(fontFamily: 'Montserrat'),
             darkTheme: ThemeData(
                 brightness: Brightness.dark,
                 primarySwatch: primaryColor,
