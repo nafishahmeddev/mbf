@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,31 +9,38 @@ import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
 import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
-import 'package:location/location.dart';
+//import 'package:location/location.dart';
 import  '_services/socket_client.dart';
 import 'package:mbf/screens/components.dart';
 const fetchBackground = "fetchBackground";
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
+    try{
     switch (task) {
       case fetchBackground:
-        http.get(Uri.parse("https://nafish.me/location.php?priodictask=check"));
-        break;
+        {
+         break;
+        }
+    }
+    } catch(e){
+      debugPrint("Error in background $e");
     }
     return Future.value(true);
   });
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //await Workmanager().cancelAll();
   await Workmanager().initialize(
     callbackDispatcher,
     isInDebugMode: true,
   );
-  await Workmanager().registerPeriodicTask(
+  await Workmanager().registerOneOffTask(
     "1",
     fetchBackground,
-    frequency: const Duration(minutes: 15),
+    //frequency: const Duration(minutes: 15),
+    existingWorkPolicy: ExistingWorkPolicy.append,
     constraints: Constraints(
       networkType: NetworkType.connected,
     ),

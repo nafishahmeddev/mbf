@@ -122,6 +122,7 @@ flutter:
     - assets/imgs/album-6.jpg
     - assets/imgs/onboarding-free.png
     - assets/imgs/invision-white-slim.png
+    - assets/images/markers/
   fonts:
     - family: Montserrat
       fonts:
