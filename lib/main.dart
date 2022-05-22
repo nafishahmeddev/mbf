@@ -14,38 +14,7 @@ import  '_services/socket_client.dart';
 import 'package:mbf/screens/components.dart';
 const fetchBackground = "fetchBackground";
 
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    try{
-    switch (task) {
-      case fetchBackground:
-        {
-         break;
-        }
-    }
-    } catch(e){
-      debugPrint("Error in background $e");
-    }
-    return Future.value(true);
-  });
-}
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  //await Workmanager().cancelAll();
-  await Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true,
-  );
-  await Workmanager().registerOneOffTask(
-    "1",
-    fetchBackground,
-    //frequency: const Duration(minutes: 15),
-    existingWorkPolicy: ExistingWorkPolicy.append,
-    constraints: Constraints(
-      networkType: NetworkType.connected,
-    ),
-    inputData: {},
-  );
   runApp(const App());
 }
 
