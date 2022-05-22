@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -8,7 +9,7 @@ import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
 import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
-import 'package:location/location.dart';
+//import 'package:location/location.dart';
 import  '_services/socket_client.dart';
 const fetchBackground = "fetchBackground";
 
@@ -17,10 +18,22 @@ void callbackDispatcher() {
     try{
     switch (task) {
       case fetchBackground:
-        Position position = await Geolocator.getCurrentPosition();
-        http.Response response = await http.get(Uri.parse("https://nafish.me/location.php?priodictask=$position"));
-        debugPrint("Location sent to server: ${response.body}");
-        break;
+        {
+          StreamSubscription<Position> positionStream = Geolocator.getPositionStream(
+              locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.medium,
+                distanceFilter: 100,
+              )
+          ).listen((Position? position) async {
+            debugPrint(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
+            http.Response response = await http.get(Uri.parse("https://nafish.me/location.php?priodictask=$position"));
+            debugPrint("Location sent to server: ${response.body}");
+          });
+          //Position position = await Geolocator.getCurrentPosition();
+          //http.Response response = await http.get(Uri.parse("https://nafish.me/location.php?priodictask=$position"));
+          //debugPrint("Location sent to server: ${response.body}");
+          break;
+        }
     }
     } catch(e){
       debugPrint("Error in background $e");
@@ -35,10 +48,10 @@ Future<void> main() async {
     callbackDispatcher,
     isInDebugMode: true,
   );
-  await Workmanager().registerPeriodicTask(
+  await Workmanager().registerOneOffTask(
     "1",
     fetchBackground,
-    frequency: const Duration(minutes: 2),
+    //frequency: const Duration(minutes: 15),
     existingWorkPolicy: ExistingWorkPolicy.append,
     constraints: Constraints(
       networkType: NetworkType.connected,

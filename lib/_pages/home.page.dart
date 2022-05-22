@@ -21,6 +21,7 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
   BitmapDescriptor? _markerIcon;
+  Map<String, BitmapDescriptor> _markerIcons = {};
   CameraPosition _centerPosition = const CameraPosition(
       target: LatLng(0, 0),
       zoom: 0
@@ -29,17 +30,12 @@ class _HomePageState extends State<HomePage> {
   User? _user;
   @override
   initState(){
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),
-        'assets/images/marker.png')
-        .then((d) {
-          print("Bitmap $d");
-          setState((){
-            _markerIcon = d;
-            _user = FirebaseAuth.instance.currentUser;
-          });
-
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2), 'assets/images/markers/A.png').then((d) {
+      setState((){
+        _markerIcon = d;
+        _user = FirebaseAuth.instance.currentUser;
+      });
     });
-
   }
   @override
   Widget build(BuildContext context) {
@@ -186,7 +182,14 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  void _fetchDonors() {
+
+  String _getRandomMarkerIcon(){
+    List icons = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
+    final random = Random();
+    return icons[random.nextInt(icons.length)];
+  }
+
+  Future<void> _fetchDonors() async {
     double zoom = _centerPosition.zoom;
     double range = ((40000/pow(2, zoom)) * 2)/((150*2));
     Set<Marker> markers = <Marker>{};
@@ -204,6 +207,13 @@ class _HomePageState extends State<HomePage> {
         random((lat-range), (lat+range)),
         random((long-range), (long+range)),
       );
+      BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2),"assets/images/markers/${_getRandomMarkerIcon()}.png");
+      markers.add(Marker(
+        markerId: MarkerId('marker_$x'),
+        position: ltLng,
+        icon: icon,
+      ));
+      continue;
       if (_markerIcon != null) {
         markers.add(Marker(
           markerId: MarkerId('marker_$x'),
