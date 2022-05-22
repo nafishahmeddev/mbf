@@ -25,12 +25,8 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
-  CameraPosition _centerPosition = const CameraPosition(
-      target: LatLng(0, 0),
-      zoom: 0
-  );
+  CameraPosition _centerPosition = const CameraPosition(target: LatLng(0, 0), zoom: 0);
   Set<Marker> _markers = <Marker>{};
-  Map<String,BitmapDescriptor> _icons = {};
   User? _user;
 
   void printText (String text) {
@@ -40,26 +36,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState(){
-
-    List labels = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
-    Future<void> op() async {
-      Map<String, BitmapDescriptor> icons = {};
-      for(String icon in labels) {
-        BitmapDescriptor i = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(devicePixelRatio: 3.2),
-            "assets/images/markers/$icon.png");
-        icons[icon] = i;
-      }
-
-      setState((){
-        _icons = icons;
-      });
-    }
     setState((){
       _user = FirebaseAuth.instance.currentUser;
-      op();
     });
-
     super.initState();
   }
   @override
@@ -101,11 +80,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 markers: _markers,
                 onMapCreated: _onMapCreated,
-                onCameraMove: (CameraPosition position){
-                  setState((){
-                    _centerPosition = position;
-                  });
-                },
                 onCameraIdle: (){
                   _fetchDonors();
                 },
@@ -146,47 +120,75 @@ class _HomePageState extends State<HomePage> {
                 )
             ),
             Positioned(
-                bottom: 0,
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                    ),
-                    child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                              child:
+              bottom: 15,
+              width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Theme.of(context).cardColor,
+                          ),
+                          width: 250,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Row(
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(120),
-                                    child:
-                                    Image.network(_user?.photoURL??"https://i.pravatar.cc/300", height: 60, width: 60,),
-                                  ),
-                                  const SizedBox(width: 15,),
                                   Expanded(
-                                    child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Hi! ${_user?.displayName??""}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
-                                          Text("${_user?.email??""}"),
-                                        ]
-                                    ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                            onTap: (){
+                                              print("Container clicked");
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: const [
+                                                  Icon(Icons.bloodtype),
+                                                  SizedBox(width: 10,),
+                                                  Text("Blood")
+                                                ],
+                                              ),
+                                            )
+                                        ),
+                                      )
                                   ),
-                                  IconButton(onPressed: _fetchMyLocation, icon: Icon(Icons.my_location))
+                                  Container(height: 46, width: 1, color: Colors.white,),
+                                  Expanded(
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                            onTap: (){
+                                              print("Container clicked");
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: const [
+                                                  Icon(Icons.local_hospital),
+                                                  SizedBox(width: 10,),
+                                                  Text("Hospital")
+                                                ],
+                                              ),
+                                            )
+                                        ),
+                                      )
+                                  ),
                                 ],
                               ),
-                            )
-                          ],
-                        )
-                    ),
+                            ],
+                          )
+                      ),
+                    ]
                 )
+
             )
           ]
       ),
@@ -227,24 +229,42 @@ class _HomePageState extends State<HomePage> {
     return icons[random.nextInt(icons.length)];
   }
 
-  Future<void> _fetchDonors() async {
-    Set<Marker> markers = <Marker>{};
-    //http get request
-    http.Response response = await http.get(Uri.parse("https://nafish.me/map/?zoom=${_centerPosition.zoom}&latitude=${_centerPosition.target.latitude}&longitude=${_centerPosition.target.longitude}"));
-    String body = response.body;
-    List locations = jsonDecode(body);
-    for(List coordinates in locations){
-      markers.add(
-          Marker(
-            markerId: MarkerId("marker_${coordinates[0]}_${coordinates[1]}"),
-            position: LatLng(coordinates[0],coordinates[1]),
-            icon: _icons[_getRandomMarkerIcon()]?? await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2), "assets/images/marker.png"),
-          )
+  void _fetchDonors() {
+    /*
+    void ob()async {
+      Set<Marker> markers = <Marker>{};
+      LatLngBounds visibleRegion = await controller!.getVisibleRegion();
+      LatLng centerLatLng = LatLng(
+        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
+            2,
+        (visibleRegion.northeast.longitude +
+            visibleRegion.southwest.longitude) / 2,
       );
+
+      //http get request
+      http.Response response = await http.get(Uri.parse("https://nafish.me/map/?zoom=${controller!.getZoomLevel()}&latitude=${centerLatLng.longitude}&longitude=${_centerPosition.target.longitude}"));
+      String body = response.body;
+      List locations = jsonDecode(body);
+      //
+      BitmapDescriptor defaultIcon = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(devicePixelRatio: 3.2),
+          "assets/images/marker.png");
+      for (List coordinates in locations) {
+        markers.add(
+            Marker(
+              markerId: MarkerId("marker_${coordinates[0]}_${coordinates[1]}"),
+              position: LatLng(coordinates[0], coordinates[1]),
+              icon: defaultIcon,
+            )
+        );
+      }
+      setState(() {
+        _markers = markers;
+      });
+
     }
-    setState((){
-      _markers = markers;
-    });
+
+     */
   }
   void _onMapCreated(GoogleMapController controllerParam) {
     setState(() {
