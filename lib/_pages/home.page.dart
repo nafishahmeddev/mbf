@@ -39,19 +39,25 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _emailTextController = TextEditingController();
 
   @override
-  initState() async {
-    Map<String, BitmapDescriptor> icons = {};
-    List labels = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
-    for(String icon in labels) {
-      BitmapDescriptor i = await BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(devicePixelRatio: 3.2),
-          "assets/images/markers/$icon.png");
-      icons[icon] = i;
-    }
+  initState(){
 
+    List labels = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
+    Future<void> op() async {
+      Map<String, BitmapDescriptor> icons = {};
+      for(String icon in labels) {
+        BitmapDescriptor i = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(devicePixelRatio: 3.2),
+            "assets/images/markers/$icon.png");
+        icons[icon] = i;
+      }
+
+      setState((){
+        _icons = icons;
+      });
+    }
     setState((){
       _user = FirebaseAuth.instance.currentUser;
-      _icons = icons;
+      op();
     });
 
     super.initState();
