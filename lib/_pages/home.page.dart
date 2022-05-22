@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
   CameraPosition _myLocation = const CameraPosition(target: LatLng(0, 0), zoom: 0);
   Set<Marker> _markers = <Marker>{};
+  Map<String,BitmapDescriptor> _icons = {};
 
   void printText (String text) {
     print("hello");
@@ -41,6 +43,7 @@ class _HomePageState extends State<HomePage> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
+    _loadIcons();
   }
   @override
   Widget build(BuildContext context) {
@@ -71,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 mapToolbarEnabled: false,
-                minMaxZoomPreference: const MinMaxZoomPreference(13.00, 18.00),
+                minMaxZoomPreference: const MinMaxZoomPreference(15.00, 18.00),
                 initialCameraPosition: CameraPosition(
                   target: _myLocation.target,
                   zoom: _myLocation.zoom,
@@ -116,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                 )
             ),
             Positioned(
-              bottom: 15,
+              bottom: 25,
               width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(30),
                             color: Theme.of(context).cardColor,
                           ),
-                          width: 250,
+                          width: 280,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       )
                                   ),
-                                  Container(height: 46, width: 1, color: Colors.white,),
+                                  Container(height: 46, width: 25, color: Colors.white,),
                                   Expanded(
                                       child: Material(
                                         color: Colors.transparent,
@@ -185,6 +188,26 @@ class _HomePageState extends State<HomePage> {
                     ]
                 )
 
+            ),
+            Positioned(
+                bottom: 18,
+                left: 0,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _getMyLocation,
+                        child: const Icon(Icons.my_location, color: Colors.black,),
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(20),
+                          primary: Colors.white, // <-- Button color
+                          onPrimary: Colors.black12, // <-- Splash color
+                        ),
+                      )
+                    ]
+                )
             )
           ]
       ),
@@ -223,6 +246,23 @@ class _HomePageState extends State<HomePage> {
     controller?.dispose();
     super.dispose();
   }
+  void _loadIcons(){
+    List<String> iconNames = ["A", "A-", "B-", "AB", "AB-", "O", "O-"];
+    for(String iconName in iconNames){
+      BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(devicePixelRatio: 3.2), 'assets/images/markers/$iconName.png')
+          .then((onValue) {
+            setState((){
+              _icons[iconName] = onValue;
+            });
+      });
+    }
+  }
+  String _getRandomIconName(){
+    List<String> iconNames = ["A", "A-", "B-", "AB", "AB-", "O", "O-"];
+    final random = Random();
+    return iconNames[random.nextInt(iconNames.length)];
+  }
   void _fetchDonors() async {
     Set<Marker> markers = <Marker>{};
     LatLngBounds visibleRegion = await controller!.getVisibleRegion();
@@ -243,6 +283,7 @@ class _HomePageState extends State<HomePage> {
           Marker(
             markerId: MarkerId("marker_${coordinate.latitude}_${coordinate.longitude}"),
             position: LatLng(coordinate.latitude,coordinate.longitude),
+            icon: _icons[_getRandomIconName()]?? await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "assets/images/marker.png")
           )
       );
     }
@@ -250,6 +291,7 @@ class _HomePageState extends State<HomePage> {
       _markers=markers;
     });
   }
+
   void _onMapCreated(GoogleMapController controllerParam) {
     setState(() {
       controller = controllerParam;
