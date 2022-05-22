@@ -20,8 +20,6 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
-  BitmapDescriptor? _markerIcon;
-  Map<String, BitmapDescriptor> _markerIcons = {};
   CameraPosition _centerPosition = const CameraPosition(
       target: LatLng(0, 0),
       zoom: 0
@@ -30,12 +28,10 @@ class _HomePageState extends State<HomePage> {
   User? _user;
   @override
   initState(){
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 3.2), 'assets/images/markers/A.png').then((d) {
-      setState((){
-        _markerIcon = d;
-        _user = FirebaseAuth.instance.currentUser;
-      });
+    setState((){
+      _user = FirebaseAuth.instance.currentUser;
     });
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -213,19 +209,6 @@ class _HomePageState extends State<HomePage> {
         position: ltLng,
         icon: icon,
       ));
-      continue;
-      if (_markerIcon != null) {
-        markers.add(Marker(
-          markerId: MarkerId('marker_$x'),
-          position: ltLng,
-          icon: _markerIcon!,
-        ));
-      } else {
-        markers.add(Marker(
-          markerId: MarkerId('marker_$x'),
-          position: ltLng,
-        ));
-      }
     }
     setState((){
       _markers = markers;
