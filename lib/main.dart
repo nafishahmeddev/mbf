@@ -79,7 +79,12 @@ class App extends StatelessWidget {
           return MaterialApp(
             title: 'MBF',
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(fontFamily: 'Montserrat'),
+            theme: ThemeData(
+                brightness: Brightness.light,
+                primarySwatch: primaryColor,
+                primaryColor: primaryColor,
+                fontFamily: 'Jost'
+            ),
             darkTheme: ThemeData(
                 brightness: Brightness.dark,
                 primarySwatch: primaryColor,
