@@ -66,14 +66,13 @@ class App extends StatelessWidget {
           options: DefaultFirebaseOptions.currentPlatform,
         ),
         builder: (fbContext, snapshot){
-          // Pass all uncaught errors from the framework to Crashlytics.
-          FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
           Widget entryWidget = const SplashPage();
           if (snapshot.hasError) {
 
           }
           if (snapshot.connectionState == ConnectionState.done) {
+            // Pass all uncaught errors from the framework to Crashlytics.
+            FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
             entryWidget = const RootRouter();
           }
           return MaterialApp(
