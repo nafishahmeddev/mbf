@@ -197,47 +197,19 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ElevatedButton(
                         onPressed: _getMyLocation,
-                        child: const Icon(Icons.my_location, color: Colors.black,),
                         style: ElevatedButton.styleFrom(
                           shape: CircleBorder(),
                           padding: EdgeInsets.all(20),
                           primary: Colors.white, // <-- Button color
                           onPrimary: Colors.black12, // <-- Splash color
                         ),
+                        child: const Icon(Icons.my_location, color: Colors.black,),
                       )
                     ]
                 )
             )
           ]
       ),
-      // drawer:Drawer(
-      //     child: ListView(
-      //       // Important: Remove any padding from the ListView.
-      //       padding: EdgeInsets.zero,
-      //       children: [
-      //         const DrawerHeader(
-      //           decoration: BoxDecoration(
-      //             color: Colors.blue,
-      //           ),
-      //           child: Text('Drawer Header'),
-      //         ),
-      //         ListTile(
-      //           title: const Text('Item 1'),
-      //           onTap: () {
-      //             // Update the state of the app.
-      //             // ...
-      //           },
-      //         ),
-      //         ListTile(
-      //           title: const Text('Item 2'),
-      //           onTap: () {
-      //             // Update the state of the app.
-      //             // ...
-      //           },
-      //         ),
-      //       ],
-      //     )
-      // ),
     );
   }
   @override

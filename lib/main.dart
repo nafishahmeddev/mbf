@@ -5,9 +5,14 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lottie/lottie.dart';
+import 'package:mbf/_pages/login.page.dart';
+import 'package:mbf/_pages/signup.page.dart';
+
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
 import 'firebase_options.dart';
+
 import  '_services/socket_client.dart';
 const fetchBackground = "fetchBackground";
 
@@ -62,12 +67,15 @@ class App extends StatelessWidget {
 
     SocketIO.initialize();
     return FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        future: Future.delayed(Duration(seconds: 3),() async {
+          return await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+        }),
         builder: (fbContext, snapshot){
           Widget entryWidget = const SplashPage();
           if (snapshot.hasError) {
+
 
           }
           if (snapshot.connectionState == ConnectionState.done) {
