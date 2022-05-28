@@ -6,7 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mbf/_pages/bloodRequestDetails.page.dart';
+import 'package:mbf/_pages/bloodRequests.page.dart';
+import 'package:mbf/_pages/donorDetails.page.dart';
+import 'package:mbf/_pages/donors.page.dart';
+import 'package:mbf/_pages/editProfile.page.dart';
 import 'package:mbf/_pages/login.page.dart';
+import 'package:mbf/_pages/newBloodRequest.page.dart';
+import 'package:mbf/_pages/profile.page.dart';
 import 'package:mbf/_pages/signup.page.dart';
 
 import 'package:mbf/_pages/splace.page.dart';
@@ -100,6 +107,15 @@ class App extends StatelessWidget {
             ),
             themeMode: ThemeMode.system,
             home: entryWidget,
+            routes: {
+              "/blood-requests": (context) => BloodRequestsPage(),
+              "/blood-requests/new": (context) => NewBloodRequestPage(),
+              "/blood-requests/details": (context) => BloodRequestDetailsPage(),
+              "/donors": (context) => DonorsPage(),
+              "/donors/details": (context) => DonorDetailsPage(),
+              "/profile": (context) => ProfilePage(),
+              "/profile/edit": (context) => EditProfilePage(),
+            },
           );
         }
     );

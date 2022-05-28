@@ -7,12 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mbf/_pages/profile.page.dart';
-import 'package:mbf/classes/coordinate.dart';
-import 'package:mbf/widgets/navbar.dart';
+import 'package:mbf/_classes/coordinate.dart';
 
-import 'package:mbf/constants/Theme.dart';
-import 'package:mbf/widgets/drawer.dart';
-
+import '../widgets/drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,30 +35,20 @@ class _HomePageState extends State<HomePage> {
   @override
   initState(){
     super.initState();
+    /*
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
+
+     */
     _loadIcons();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: Navbar(
-        title: "Home",
-        searchBar: true,
-        categoryOne: "Blood",
-        categoryTwo: "Hospital",
-        transparent: true,
-        tags: [],
-        getCurrentPage: printText,
-        searchOnChanged: printText,
-        searchController: _emailTextController,
-      ),
-      backgroundColor: NowUIColors.neutralDark,
-      // key: _scaffoldKey,
-      drawer: NowDrawer(currentPage: "Home"),
+      key: _key,
+      drawer: NowDrawer(currentPage: "/profile"),
       body: Stack(
           children: <Widget>[
             SizedBox(
@@ -93,13 +80,13 @@ class _HomePageState extends State<HomePage> {
                   width: double.infinity,
                   child:    Row(
                     children: [
-                      // MaterialButton(
-                      //   onPressed: () => _key.currentState!.openDrawer(),
-                      //   padding: const EdgeInsets.all(10),
-                      //   color: Colors.white,
-                      //   shape: const CircleBorder(),
-                      //   child: const Icon(Icons.menu, color: Colors.black,),
-                      // ),
+                      MaterialButton(
+                        onPressed: () => _key.currentState!.openDrawer(),
+                        padding: const EdgeInsets.all(10),
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: const Icon(Icons.menu, color: Colors.black,),
+                      ),
                       Expanded(child: Container()),
                       MaterialButton(
                         onPressed: (){
