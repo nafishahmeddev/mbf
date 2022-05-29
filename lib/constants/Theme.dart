@@ -15,7 +15,7 @@ class NowUIColors {
 
   static const Color neutral = Color.fromRGBO(255, 255, 255, 0.2);
 
-  static const Color neutralDark = Color.fromRGBO(128, 128, 128, 0.9);
+  static const Color neutralDark = Color.fromRGBO(128, 128, 128, 0);
 
   static const Color tabs = Color.fromRGBO(222, 222, 222, 0.3);
 

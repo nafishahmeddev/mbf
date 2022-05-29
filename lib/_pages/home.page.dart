@@ -49,11 +49,7 @@ class _HomePageState extends State<HomePage> {
     ));
     return Scaffold(
       appBar: Navbar(
-        title: "Home",
         searchBar: true,
-        categoryOne: "Blood",
-        categoryTwo: "Hospital",
-        transparent: true,
         tags: [],
         getCurrentPage: printText,
         searchOnChanged: printText,

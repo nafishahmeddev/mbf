@@ -47,7 +47,7 @@ class Navbar extends StatefulWidget implements PreferredSizeWidget {
       this.bgColor = NowUIColors.white,
       this.searchBar = false});
 
-  final double _prefferedHeight = 180.0;
+  final double _prefferedHeight = 110.0;
 
   @override
   _NavbarState createState() => _NavbarState();
@@ -124,17 +124,17 @@ class _NavbarState extends State<Navbar> {
                               else
                                 Navigator.pop(context);
                             }),
-                        Text(widget.title,
-                            style: TextStyle(
-                                color: !widget.transparent
-                                    ? (widget.bgColor == NowUIColors.white
-                                        ? NowUIColors.text
-                                        : NowUIColors.white)
-                                    : (widget.reverseTextcolor
-                                        ? NowUIColors.text
-                                        : NowUIColors.white),
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18.0)),
+                        // Text(widget.title,
+                        //     style: TextStyle(
+                        //         color: !widget.transparent
+                        //             ? (widget.bgColor == NowUIColors.white
+                        //                 ? NowUIColors.text
+                        //                 : NowUIColors.white)
+                        //             : (widget.reverseTextcolor
+                        //                 ? NowUIColors.text
+                        //                 : NowUIColors.white),
+                        //         fontWeight: FontWeight.w400,
+                        //         fontSize: 18.0)),
                       ],
                     ),
                     if (widget.rightOptions)
@@ -186,7 +186,7 @@ class _NavbarState extends State<Navbar> {
                 if (widget.searchBar)
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 8, bottom: 4, left: 15, right: 15),
+                        top: 0, bottom: 0, left: 15, right: 15),
                     child: Input(
                         placeholder: "What are you looking for?",
                         controller: widget.searchController,
@@ -203,8 +203,8 @@ class _NavbarState extends State<Navbar> {
                           //       context,
                           //       MaterialPageRoute(
                           //           builder: (context) => Search()));
-                        }, prefixIcon: Icon(FontAwesomeIcons.twitter,
-                        size: 14.0, color: Colors.white),
+                        }, prefixIcon: Icon(FontAwesomeIcons.user,
+                        size: 14.0, color: Colors.black),
                     ),
                   ),
                 SizedBox(
