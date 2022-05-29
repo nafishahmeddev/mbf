@@ -1,17 +1,26 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lottie/lottie.dart';
+import 'package:mbf/_pages/bloodRequestDetails.page.dart';
+import 'package:mbf/_pages/bloodRequests.page.dart';
+import 'package:mbf/_pages/donorDetails.page.dart';
+import 'package:mbf/_pages/donors.page.dart';
+import 'package:mbf/_pages/editProfile.page.dart';
+import 'package:mbf/_pages/login.page.dart';
+import 'package:mbf/_pages/newBloodRequest.page.dart';
+import 'package:mbf/_pages/profile.page.dart';
+import 'package:mbf/_pages/signup.page.dart';
+
 import 'package:mbf/_pages/splace.page.dart';
 import 'package:mbf/router.dart';
-import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
-//import 'package:location/location.dart';
+
 import  '_services/socket_client.dart';
-import 'package:mbf/screens/components.dart';
 const fetchBackground = "fetchBackground";
 
 Future<void> main() async {
@@ -65,21 +74,31 @@ class App extends StatelessWidget {
 
     SocketIO.initialize();
     return FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        future: Future.delayed(Duration(seconds: 3),() async {
+          return await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+        }),
         builder: (fbContext, snapshot){
           Widget entryWidget = const SplashPage();
           if (snapshot.hasError) {
 
+
           }
           if (snapshot.connectionState == ConnectionState.done) {
+            // Pass all uncaught errors from the framework to Crashlytics.
+            FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
             entryWidget = const RootRouter();
           }
           return MaterialApp(
             title: 'MBF',
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(fontFamily: 'Montserrat'),
+            theme: ThemeData(
+                brightness: Brightness.light,
+                primarySwatch: primaryColor,
+                primaryColor: primaryColor,
+                fontFamily: 'Jost'
+            ),
             darkTheme: ThemeData(
                 brightness: Brightness.dark,
                 primarySwatch: primaryColor,
@@ -88,6 +107,15 @@ class App extends StatelessWidget {
             ),
             themeMode: ThemeMode.system,
             home: entryWidget,
+            routes: {
+              "/blood-requests": (context) => BloodRequestsPage(),
+              "/blood-requests/new": (context) => NewBloodRequestPage(),
+              "/blood-requests/details": (context) => BloodRequestDetailsPage(),
+              "/donors": (context) => DonorsPage(),
+              "/donors/details": (context) => DonorDetailsPage(),
+              "/profile": (context) => ProfilePage(),
+              "/profile/edit": (context) => EditProfilePage(),
+            },
           );
         }
     );

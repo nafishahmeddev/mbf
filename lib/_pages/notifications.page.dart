@@ -21,7 +21,7 @@ List<String> imgArray = [
   "assets/imgs/album-6.jpg"
 ];
 
-class ProfilePage extends StatelessWidget {
+class NotificationsPage extends StatelessWidget {
   void printText (String text) {
     print("hello");
   }

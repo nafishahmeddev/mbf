@@ -7,11 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mbf/_pages/profile.page.dart';
-import 'package:mbf/widgets/navbar.dart';
+import 'package:mbf/_classes/coordinate.dart';
 
-import 'package:mbf/constants/Theme.dart';
-import 'package:mbf/widgets/drawer.dart';
-
+import '../widgets/drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,9 +23,9 @@ final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 
 class _HomePageState extends State<HomePage> {
   GoogleMapController? controller;
-  CameraPosition _centerPosition = const CameraPosition(target: LatLng(0, 0), zoom: 0);
+  CameraPosition _myLocation = const CameraPosition(target: LatLng(0, 0), zoom: 0);
   Set<Marker> _markers = <Marker>{};
-  User? _user;
+  Map<String,BitmapDescriptor> _icons = {};
 
   void printText (String text) {
     print("hello");
@@ -36,18 +34,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState(){
-    setState((){
-      _user = FirebaseAuth.instance.currentUser;
-    });
     super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
+    /*
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
+
+     */
+    _loadIcons();
+  }
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
+      drawer: NowDrawer(currentPage: "/profile"),
       appBar: Navbar(
         searchBar: true,
         tags: [],
@@ -69,16 +70,14 @@ class _HomePageState extends State<HomePage> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 mapToolbarEnabled: false,
-                minMaxZoomPreference: const MinMaxZoomPreference(13.00, 18.00),
+                minMaxZoomPreference: const MinMaxZoomPreference(15.00, 18.00),
                 initialCameraPosition: CameraPosition(
-                  target: _centerPosition.target,
-                  zoom: _centerPosition.zoom,
+                  target: _myLocation.target,
+                  zoom: _myLocation.zoom,
                 ),
                 markers: _markers,
                 onMapCreated: _onMapCreated,
-                onCameraIdle: (){
-                  _fetchDonors();
-                },
+                onCameraIdle: _fetchDonors,
               ),
             ),
             Positioned(
@@ -91,13 +90,13 @@ class _HomePageState extends State<HomePage> {
                   width: double.infinity,
                   child:    Row(
                     children: [
-                      // MaterialButton(
-                      //   onPressed: () => _key.currentState!.openDrawer(),
-                      //   padding: const EdgeInsets.all(10),
-                      //   color: Colors.white,
-                      //   shape: const CircleBorder(),
-                      //   child: const Icon(Icons.menu, color: Colors.black,),
-                      // ),
+                      MaterialButton(
+                        onPressed: () => _key.currentState!.openDrawer(),
+                        padding: const EdgeInsets.all(10),
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: const Icon(Icons.menu, color: Colors.black,),
+                      ),
                       Expanded(child: Container()),
                       MaterialButton(
                         onPressed: (){
@@ -116,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 )
             ),
             Positioned(
-              bottom: 15,
+              bottom: 25,
               width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(30),
                             color: Theme.of(context).cardColor,
                           ),
-                          width: 250,
+                          width: 280,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       )
                                   ),
-                                  Container(height: 46, width: 1, color: Colors.white,),
+                                  Container(height: 46, width: 25, color: Colors.white,),
                                   Expanded(
                                       child: Material(
                                         color: Colors.transparent,
@@ -185,100 +184,100 @@ class _HomePageState extends State<HomePage> {
                     ]
                 )
 
+            ),
+            Positioned(
+                bottom: 18,
+                left: 0,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _getMyLocation,
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(20),
+                          primary: Colors.white, // <-- Button color
+                          onPrimary: Colors.black12, // <-- Splash color
+                        ),
+                        child: const Icon(Icons.my_location, color: Colors.black,),
+                      )
+                    ]
+                )
             )
           ]
       ),
-      // drawer:Drawer(
-      //     child: ListView(
-      //       // Important: Remove any padding from the ListView.
-      //       padding: EdgeInsets.zero,
-      //       children: [
-      //         const DrawerHeader(
-      //           decoration: BoxDecoration(
-      //             color: Colors.blue,
-      //           ),
-      //           child: Text('Drawer Header'),
-      //         ),
-      //         ListTile(
-      //           title: const Text('Item 1'),
-      //           onTap: () {
-      //             // Update the state of the app.
-      //             // ...
-      //           },
-      //         ),
-      //         ListTile(
-      //           title: const Text('Item 2'),
-      //           onTap: () {
-      //             // Update the state of the app.
-      //             // ...
-      //           },
-      //         ),
-      //       ],
-      //     )
-      // ),
     );
   }
-
-  String _getRandomMarkerIcon(){
-    List icons = ["A", "A-", "B","B-", "AB","AB-", "O", "O-"];
-    final random = Random();
-    return icons[random.nextInt(icons.length)];
+  @override
+  dispose(){
+    controller?.dispose();
+    super.dispose();
   }
-
-  void _fetchDonors() {
-    /*
-    void ob()async {
-      Set<Marker> markers = <Marker>{};
-      LatLngBounds visibleRegion = await controller!.getVisibleRegion();
-      LatLng centerLatLng = LatLng(
-        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
-            2,
-        (visibleRegion.northeast.longitude +
-            visibleRegion.southwest.longitude) / 2,
-      );
-
-      //http get request
-      http.Response response = await http.get(Uri.parse("https://nafish.me/map/?zoom=${controller!.getZoomLevel()}&latitude=${centerLatLng.longitude}&longitude=${_centerPosition.target.longitude}"));
-      String body = response.body;
-      List locations = jsonDecode(body);
-      //
-      BitmapDescriptor defaultIcon = await BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(devicePixelRatio: 3.2),
-          "assets/images/marker.png");
-      for (List coordinates in locations) {
-        markers.add(
-            Marker(
-              markerId: MarkerId("marker_${coordinates[0]}_${coordinates[1]}"),
-              position: LatLng(coordinates[0], coordinates[1]),
-              icon: defaultIcon,
-            )
-        );
-      }
-      setState(() {
-        _markers = markers;
+  void _loadIcons(){
+    List<String> iconNames = ["A", "A-", "B-", "AB", "AB-", "O", "O-"];
+    for(String iconName in iconNames){
+      BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(devicePixelRatio: 3.2), 'assets/images/markers/$iconName.png')
+          .then((onValue) {
+            setState((){
+              _icons[iconName] = onValue;
+            });
       });
-
     }
-
-     */
   }
+  String _getRandomIconName(){
+    List<String> iconNames = ["A", "A-", "B-", "AB", "AB-", "O", "O-"];
+    final random = Random();
+    return iconNames[random.nextInt(iconNames.length)];
+  }
+  void _fetchDonors() async {
+    Set<Marker> markers = <Marker>{};
+    LatLngBounds visibleRegion = await controller!.getVisibleRegion();
+    LatLng centerLatLng = LatLng(
+      (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+      (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+    );
+
+    //http get request
+    String url = "https://nafish.me/map/?zoom=${await controller!.getZoomLevel()}&latitude=${centerLatLng.latitude}&longitude=${centerLatLng.longitude}";
+    http.Response response = await http.get(Uri.parse(url));
+    List<dynamic> locations = json.decode(response.body);
+
+
+    for(dynamic point in locations){
+      Coordinate coordinate = Coordinate.fromJson(point);
+      markers.add(
+          Marker(
+            markerId: MarkerId("marker_${coordinate.latitude}_${coordinate.longitude}"),
+            position: LatLng(coordinate.latitude,coordinate.longitude),
+            icon: _icons[_getRandomIconName()]?? await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "assets/images/marker.png")
+          )
+      );
+    }
+    setState((){
+      _markers=markers;
+    });
+  }
+
   void _onMapCreated(GoogleMapController controllerParam) {
     setState(() {
       controller = controllerParam;
-      _fetchMyLocation();
     });
+    _getMyLocation();
   }
-  void _fetchMyLocation() async{
+  void _getMyLocation() async{
     debugPrint("fetching location");
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _centerPosition = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 16);
-        controller?.animateCamera(CameraUpdate.newCameraPosition(_centerPosition));
+        _myLocation = CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 16);
+        controller?.animateCamera(CameraUpdate.newCameraPosition(_myLocation));
       });
     }).catchError((e) {
       debugPrint(e);
     });
   }
+
 
 }

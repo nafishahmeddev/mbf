@@ -4,7 +4,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketIO{
   static IO.Socket socket = IO.io("http://0.0.0.0").close();
   static void initialize(){
-    // Dart client
     debugPrint("connecting to socket server");
     socket = IO.io('https://socketio-whiteboard-zmx4.herokuapp.com/');
     socket.onConnect((_) {
