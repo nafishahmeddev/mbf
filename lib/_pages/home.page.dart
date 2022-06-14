@@ -10,6 +10,7 @@ import 'package:mbf/_pages/profile.page.dart';
 import 'package:mbf/_classes/coordinate.dart';
 
 import '../widgets/drawer.dart';
+import '../widgets/navbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -35,20 +36,16 @@ class _HomePageState extends State<HomePage> {
   @override
   initState(){
     super.initState();
-    /*
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark// transparent status bar
     ));
-
-     */
     _loadIcons();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
-      drawer: NowDrawer(currentPage: "/profile"),
       appBar: Navbar(
         searchBar: true,
         tags: [],
@@ -56,7 +53,6 @@ class _HomePageState extends State<HomePage> {
         searchOnChanged: printText,
         searchController: _emailTextController,
       ),
-      backgroundColor: NowUIColors.neutralDark,
       // key: _scaffoldKey,
       drawer: NowDrawer(currentPage: "Home"),
       body: Stack(
